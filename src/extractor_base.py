@@ -1,49 +1,89 @@
 import os
+import re
 import pdfplumber
+import pandas as pd
 
-# 1. ESTO CORRIGE EL ERROR: Encuentra la raíz del proyecto de forma automática
-# Toma la ubicación de este script (src/) y sube un nivel a la raíz del proyecto
+# Configuración de rutas absolutas automáticas
 RUTA_DEL_SCRIPT = os.path.dirname(os.path.abspath(__file__))
 RAIZ_PROYECTO = os.path.dirname(RUTA_DEL_SCRIPT)
-
-# Define la ruta absoluta hacia data/raw
 CARPETA_RAW = os.path.join(RAIZ_PROYECTO, "data", "raw")
+CARPETA_PROCESSED = os.path.join(RAIZ_PROYECTO, "data", "processed")
 
 
-def probar_lectura_pdf():
-    # Creamos la carpeta automáticamente si por alguna razón no existía
-    if not os.path.exists(CARPETA_RAW):
-        os.makedirs(CARPETA_RAW)
-        print(f"📁 Se creó la carpeta automáticamente en: {CARPETA_RAW}")
-        print("👉 Por favor, guarda un fallo en PDF ahí dentro y vuelve a ejecutar el script.")
-        return
+def extraer_metadatos_fallo(texto):
+    """
+    Usa Expresiones Regulares (Regex) adaptadas a la estructura del PJN
+    para extraer Actor, Demandado y Fecha.
+    """
+    metadatos = {
+        "Actor": "No encontrado",
+        "Demandado": "No encontrado",
+        "Fecha": "No encontrada"
+    }
 
-    # Buscar todos los archivos PDF en la carpeta
+    if not texto:
+        return metadatos
+
+    # 1. Buscar el formato clásico argentino: "Actor c/ Demandado s/ materia"
+    # El patrón busca texto antes del "c/" y texto entre el "c/" y el "s/"
+    patron_caratula = re.search(r"([A-Za-z\s\,\.]+)\s+c\/\s+([A-Za-z\s\,\.\&\-]+)\s+s\/", texto)
+
+    if patron_caratula:
+        metadatos["Actor"] = patron_caratula.group(1).strip()
+        metadatos["Demandado"] = patron_caratula.group(2).strip()
+
+    # 2. Buscar la fecha del fallo (Ej: "Buenos Aires, 26 de noviembre de 2007")
+    # Busca un lugar seguido de una fecha con mes en texto
+    patron_fecha = re.search(
+        r"(?:Buenos Aires|CABA|Ciudad Autónoma de Buenos Aires)?\,\s*(\d{1,2}\s+de\s+[a-z]+\s+de\s+\d{4})", texto,
+        re.IGNORECASE)
+
+    if patron_fecha:
+        metadatos["Fecha"] = patron_fecha.group(1).strip()
+
+    return metadatos
+
+
+def procesar_pipeline():
+    # Asegurar que las carpetas existan
+    os.makedirs(CARPETA_PROCESSED, exist_ok=True)
+
     archivos = [f for f in os.listdir(CARPETA_RAW) if f.endswith(".pdf")]
 
     if not archivos:
-        print(f"❌ Error: No encontré ningún archivo .pdf en la carpeta: {CARPETA_RAW}")
-        print("👉 Por favor, guardá un fallo en PDF en esa carpeta antes de correr el script.")
+        print(f"❌ No encontré archivos PDF en: {CARPETA_RAW}")
         return
 
-    # Tomamos el primer fallo de la lista para la prueba
-    primer_fallo = archivos[0]  # <-- Corregido también el índice que faltaba en el script anterior
-    ruta_completa = os.path.join(CARPETA_RAW, primer_fallo)
-    print(f"📖 Intentando leer el archivo: {primer_fallo}...\n")
+    resultados_totales = []
 
-    # 2. Abrir el PDF y extraer el texto de la primera página
-    with pdfplumber.open(ruta_completa) as pdf:
-        primera_pagina = pdf.pages[0]
-        texto_extraido = primera_pagina.extract_text()
+    for archivo in archivos:
+        ruta_completa = os.path.join(CARPETA_RAW, archivo)
+        print(f"🔍 Analizando: {archivo}...")
 
-        if texto_extraido:
-            print("✅ ¡Texto extraído con éxito! Aquí tenés las primeras 500 letras:\n")
-            print("-" * 50)
-            print(texto_extraido[:500])  # Muestra solo el inicio del fallo
-            print("-" * 50)
-        else:
-            print("⚠️ Advertencia: No se pudo extraer texto. ¿El PDF es una imagen escaneada?")
+        with pdfplumber.open(ruta_completa) as pdf:
+            # Extraemos la primera página donde está la carátula y fecha
+            primera_pagina = pdf.pages[0]
+            texto = primera_pagina.extract_text()
+
+            # Aplicamos nuestra lógica de Regex
+            datos_extraidos = extraer_metadatos_fallo(texto)
+            datos_extraidos["Archivo_Origen"] = archivo
+
+            resultados_totales.append(datos_extraidos)
+
+    # 3. Convertir a un DataFrame de Pandas para verlo como tabla
+    df_resultados = pd.DataFrame(resultados_totales)
+
+    print("\n📊 ¡PROCESO COMPLETADO! Datos Estructurados:")
+    print("-" * 60)
+    print(df_resultados.to_string(index=False))
+    print("-" * 60)
+
+    # Guardar el resultado en la carpeta processed
+    ruta_guardado = os.path.join(CARPETA_PROCESSED, "reporte_jurisprudencia.csv")
+    df_resultados.to_csv(ruta_guardado, index=False, encoding="utf-8-sig")
+    print(f"💾 Reporte guardado con éxito en: {ruta_guardado}")
 
 
 if __name__ == "__main__":
-    probar_lectura_pdf()
+    procesar_pipeline()
