@@ -1,89 +1,84 @@
 import os
-import re
 import pdfplumber
-import pandas as pd
+from google import genai
+from dotenv import load_dotenv
 
-# Configuración de rutas absolutas automáticas
+# 1. Configuración de rutas absolutas automáticas
 RUTA_DEL_SCRIPT = os.path.dirname(os.path.abspath(__file__))
 RAIZ_PROYECTO = os.path.dirname(RUTA_DEL_SCRIPT)
 CARPETA_RAW = os.path.join(RAIZ_PROYECTO, "data", "raw")
 CARPETA_PROCESSED = os.path.join(RAIZ_PROYECTO, "data", "processed")
 
+# 2. CARGAR EL ARCHIVO .ENV SEGURO Y CONECTAR LA IA
+load_dotenv(os.path.join(RAIZ_PROYECTO, ".env"))
+client = genai.Client()
 
-def extraer_metadatos_fallo(texto):
+
+def analizar_contenido_juridico(texto_completo):
     """
-    Usa Expresiones Regulares (Regex) adaptadas a la estructura del PJN
-    para extraer Actor, Demandado y Fecha.
+    Envía las primeras páginas del fallo a Gemini con un prompt estructurado
+    para extraer los hechos y la división de votos.
     """
-    metadatos = {
-        "Actor": "No encontrado",
-        "Demandado": "No encontrado",
-        "Fecha": "No encontrada"
-    }
+    # Recortamos el texto para optimizar la velocidad (las primeras 15.000 letras)
+    texto_recortado = texto_completo[:15000]
 
-    if not texto:
-        return metadatos
+    prompt = f"""
+    Actúa como un experto en derecho argentino y jurimetría. Analiza el siguiente fragmento de un fallo judicial y extrae estrictamente la siguiente información de forma clara y profesional:
 
-    # 1. Buscar el formato clásico argentino: "Actor c/ Demandado s/ materia"
-    # El patrón busca texto antes del "c/" y texto entre el "c/" y el "s/"
-    patron_caratula = re.search(r"([A-Za-z\s\,\.]+)\s+c\/\s+([A-Za-z\s\,\.\&\-]+)\s+s\/", texto)
+    1. RESUMEN DE LOS HECHOS: (Explica brevemente qué originó el conflicto o reclamo en un párrafo de máximo 4 líneas).
+    2. VOTO MAYORITARIO: (Indica qué resolvió la mayoría del tribunal y, si se menciona, qué jueces lo integraron o lideraron).
+    3. VOTO MINORITARIO O DISIDENCIA: (Indica si hubo voto en disidencia, qué juez lo sostuvo y cuál era su postura. Si no hubo disidencia, escribe 'No registra disidencia').
 
-    if patron_caratula:
-        metadatos["Actor"] = patron_caratula.group(1).strip()
-        metadatos["Demandado"] = patron_caratula.group(2).strip()
+    Texto del fallo:
+    \"\"\"{texto_recortado}\"\"\"
+    """
 
-    # 2. Buscar la fecha del fallo (Ej: "Buenos Aires, 26 de noviembre de 2007")
-    # Busca un lugar seguido de una fecha con mes en texto
-    patron_fecha = re.search(
-        r"(?:Buenos Aires|CABA|Ciudad Autónoma de Buenos Aires)?\,\s*(\d{1,2}\s+de\s+[a-z]+\s+de\s+\d{4})", texto,
-        re.IGNORECASE)
-
-    if patron_fecha:
-        metadatos["Fecha"] = patron_fecha.group(1).strip()
-
-    return metadatos
+    try:
+        response = client.models.generate_content(
+            model='gemini-2.5-flash',  # El modelo gratuito, rápido y más moderno de Google
+            contents=prompt,
+        )
+        return response.text
+    except Exception as e:
+        return f"❌ Error al conectar con Gemini: {str(e)}"
 
 
-def procesar_pipeline():
-    # Asegurar que las carpetas existan
+def ejecutar_pipeline_completo():
+    # Asegurar que existan las carpetas de salida
     os.makedirs(CARPETA_PROCESSED, exist_ok=True)
 
     archivos = [f for f in os.listdir(CARPETA_RAW) if f.endswith(".pdf")]
 
     if not archivos:
-        print(f"❌ No encontré archivos PDF en: {CARPETA_RAW}")
+        print(f"❌ Error: No encontré ningún archivo .pdf en la carpeta: {CARPETA_RAW}")
         return
 
-    resultados_totales = []
+    # Tomamos el primer fallo (por ejemplo, fallo_1.pdf que contiene "Badaro")
+    primer_fallo = archivos[0]
+    ruta_completa = os.path.join(CARPETA_RAW, primer_fallo)
+    print(f"📖 Leyendo el archivo físico: {primer_fallo}...")
 
-    for archivo in archivos:
-        ruta_completa = os.path.join(CARPETA_RAW, archivo)
-        print(f"🔍 Analizando: {archivo}...")
+    # Extraer el texto completo del PDF usando pdfplumber
+    texto_fallo = ""
+    with pdfplumber.open(ruta_completa) as pdf:
+        for pagina in pdf.pages:
+            texto_fallo += pagina.extract_text() or ""
 
-        with pdfplumber.open(ruta_completa) as pdf:
-            # Extraemos la primera página donde está la carátula y fecha
-            primera_pagina = pdf.pages[0]
-            texto = primera_pagina.extract_text()
+    if not texto_fallo:
+        print("⚠️ No se pudo extraer texto del PDF. Verificá que no sea una imagen escaneada.")
+        return
 
-            # Aplicamos nuestra lógica de Regex
-            datos_extraidos = extraer_metadatos_fallo(texto)
-            datos_extraidos["Archivo_Origen"] = archivo
+    print("🧠 Enviando el texto a la Inteligencia Artificial para el análisis jurídico...")
+    print("=" * 60)
 
-            resultados_totales.append(datos_extraidos)
+    # Ejecutar la consulta a Gemini
+    analisis_juridico = analizar_contenido_juridico(texto_fallo)
 
-    # 3. Convertir a un DataFrame de Pandas para verlo como tabla
-    df_resultados = pd.DataFrame(resultados_totales)
-
-    print("\n📊 ¡PROCESO COMPLETADO! Datos Estructurados:")
-    print("-" * 60)
-    print(df_resultados.to_string(index=False))
-    print("-" * 60)
-
-    # Guardar el resultado en la carpeta processed
-    ruta_guardado = os.path.join(CARPETA_PROCESSED, "reporte_jurisprudencia.csv")
-    df_resultados.to_csv(ruta_guardado, index=False, encoding="utf-8-sig")
-    print(f"💾 Reporte guardado con éxito en: {ruta_guardado}")
+    # Mostrar el resultado final en la consola de PyCharm
+    print(analisis_juridico)
+    print("=" * 60)
 
 
 if __name__ == "__main__":
-    procesar_pipeline()
+    ejecutar_pipeline_completo()
+
