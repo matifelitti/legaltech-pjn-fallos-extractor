@@ -19,17 +19,24 @@ except Exception:
 
 
 def analizar_con_ia(texto_completo):
-    """Envía el fragmento del fallo a Gemini con el prompt jurídico."""
+    """
+    Envía el fragmento del fallo a Gemini con un prompt jurídico abstracto y universal.
+    Funciona para cualquier fuero (Civil, Penal, Laboral, Comercial, Familia, etc.).
+    """
     if not client:
         return "❌ Error: No se pudo inicializar el cliente de IA. Verifica tu archivo .env"
 
     texto_recortado = texto_completo[:15000]
-    prompt = f"""
-    Actúa como un experto en derecho argentino y jurimetría. Analiza el siguiente fragmento de un fallo judicial y extrae estrictamente la siguiente información de forma clara y profesional:
 
-    1. RESUMEN DE LOS HECHOS: (Explica brevemente qué originó el conflicto o reclamo en un párrafo de máximo 4 líneas).
-    2. VOTO MAYORITARIO: (Indica qué resolvió la mayoría del tribunal y, si se menciona, qué jueces lo integraron o lideraron).
-    3. VOTO MINORITARIO O DISIDENCIA: (Indica si hubo voto en disidencia, qué juez lo sostuvo y cuál era su postura. Si no hubo disidencia, escribe 'No registra disidencia').
+    prompt = f"""
+    Actúa como un prestigioso experto en derecho argentino, técnica legislativa y jurimetría. 
+    Analiza el siguiente fragmento de una sentencia judicial y extrae estrictamente la siguiente información estructurada de forma clara, técnica y objetiva, adaptándote al fuero del caso:
+
+    1. RESUMEN DE LOS HECHOS Y OBJETO: (Explica brevemente qué situación originó el conflicto y qué pretensión concreta se reclama en un párrafo de máximo 4 líneas).
+    2. FUNDAMENTOS JURÍDICOS DEL VOTO MAYORITARIO: (Indica los argumentos legales del voto que hace mayoría. Menciona las normas, códigos, leyes, decretos o artículos constitucionales clave en los que se basaron para decidir).
+    3. DISIDENCIAS / VOTOS MINORITARIOS: (Si existieron votos en disidencia, explica brevemente quién los sostuvo y cuál era su postura legal. Si el fallo fue por unanimidad, escribe 'Decidido por unanimidad / No registra disidencia').
+    4. PARTE DISPOSITIVA (RESOLUCIÓN): (Resume de forma directa qué ordena, prohíbe, declara o resuelve el tribunal en su decisión final respecto a las partes).
+    5. PRECEDENTE / DOCTRINA LEGAL: (Identifica el principio jurídico abstracto o la regla general que este fallo establece como precedente para futuros casos similares en una sola frase contundente).
 
     Texto del fallo:
     \"\"\"{texto_recortado}\"\"\"
