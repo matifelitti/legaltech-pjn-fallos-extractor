@@ -5,6 +5,19 @@ import pandas as pd
 from google import genai
 from dotenv import load_dotenv
 
+st.set_page_config(page_title="LegalTech - Extractor de Fallos", page_icon="🏛️", layout="centered")
+
+# --- FUNCIÓN PARA INYECTAR CSS DESDE UN ARCHIVO APARTE ---
+def cargar_css(ruta_css):
+    if os.path.exists(ruta_css):
+        with open(ruta_css, "r", encoding="utf-8") as f:
+            st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
+# Cargar estilos de forma automática
+RUTA_DE_RAIZ = os.path.dirname(os.path.abspath(__file__))
+cargar_css(os.path.join(RUTA_DE_RAIZ, "static", "styles.css"))
+
+
 # 1. Configuración de la página web (Diseño centralizado)
 st.set_page_config(page_title="LegalTech - Extractor de Fallos", page_icon="🏛️", layout="centered")
 

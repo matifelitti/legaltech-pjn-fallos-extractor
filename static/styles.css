@@ -1,0 +1,54 @@
+h1 {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    padding-bottom: 10px;
+}
+
+.stTabs [data-baseweb="tab-list"] {
+    gap: 20px;
+    justify-content: center;
+    border-bottom: 20px solid rgba(0,0,0,0);
+}
+
+.stTabs [data-baseweb="tab"] {
+    height: 50px;
+    white-space: pre-wrap;
+    background-color: var(--background-secondary-color);
+    border-radius: 8px 8px 0px 0px;
+    padding: 10px 20px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.stTabs [data-baseweb="tab"]:hover {
+    color: #ff4b4b !important;
+}
+
+.stAlert {
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0,0,0,0.05);
+    padding: 20px;
+}
+
+/* Diseño de los botones principales */
+.stButton > button {
+    width: 100%;
+    background-color: #ff4b4b;
+    color: white;
+    border-radius: 8px;
+    border: none;
+    padding: 12px 20px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+.stButton > button:hover {
+    background-color: #e04343;
+    color: white;
+}
+
+.stButton > button:active {
+    transform: scale(0.98);
+}
