@@ -1,54 +1,143 @@
+/* Paleta de Colores */
+:root {
+    --azul-marino: #0f1e36;
+    --azul-hover: #172e52;
+    --gris-oxford: #64748b;
+    --dorado-prestigio: #c5a880;
+    --dorado-hover: #b39366;
+    --blanco-puro: #ffffff;
+    --gris-tiza-claro: #cbd5e1;
+}
+
+/* Título principal */
 h1 {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-family: 'Georgia', serif;
+    color: var(--azul-marino);
     font-weight: 700;
     letter-spacing: -0.5px;
+    padding-bottom: 5px;
+    text-align: center;
+}
+
+/* Soporte para modo oscuro en el título principal */
+[data-theme="dark"] h1 {
+    color: var(--blanco-puro);
+}
+
+/* Subtítulos de la app */
+.stMarkdown p {
+    font-size: 1.05rem;
+    text-align: center;
+}
+
+/* Diseño elegante y centrado para las pestañas (Tabs) */
+.stTabs [data-baseweb="tab-list"] {
+    gap: 12px;
+    justify-content: center;
+    border-bottom: 2px solid var(--gris-oxford);
     padding-bottom: 10px;
 }
 
-.stTabs [data-baseweb="tab-list"] {
-    gap: 20px;
-    justify-content: center;
-    border-bottom: 20px solid rgba(0,0,0,0);
-}
-
-.stTabs [data-baseweb="tab"] {
-    height: 50px;
-    white-space: pre-wrap;
-    background-color: var(--background-secondary-color);
-    border-radius: 8px 8px 0px 0px;
-    padding: 10px 20px;
+/* TEXTO DE LAS PESTAÑAS NO SELECCIONADAS (Modo Claro) */
+.stTabs [data-baseweb="tab"] p {
+    color: var(--gris-oxford) !important;
     font-weight: 600;
-    transition: all 0.3s ease;
+    font-size: 1rem;
+    transition: all 0.2s ease;
 }
 
-.stTabs [data-baseweb="tab"]:hover {
-    color: #ff4b4b !important;
+/* TEXTO DE LAS PESTAÑAS NO SELECCIONADAS (Modo Oscuro - Gris legible) */
+[data-theme="dark"] .stTabs [data-baseweb="tab"] p {
+    color: var(--gris-tiza-claro) !important;
 }
 
-.stAlert {
-    border-radius: 12px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-    border: 1px solid rgba(0,0,0,0.05);
-    padding: 20px;
+/*  ACTIVA (Modo Claro - Fondo Azul Sutil) */
+.stTabs [aria-selected="true"] {
+    background-color: rgba(15, 30, 54, 0.08) !important;
+    border-bottom: 3px solid var(--azul-marino) !important;
+    border-radius: 4px 4px 0 0;
+}
+.stTabs [aria-selected="true"] p {
+    color: var(--azul-marino) !important;
+    font-weight: 700 !important;
 }
 
-/* Diseño de los botones principales */
+/* (Modo Oscuro - Fondo Grafito y Letras Doradas) */
+[data-theme="dark"] .stTabs [aria-selected="true"] {
+    background-color: rgba(255, 255, 255, 0.05) !important; /* Fondo sutil, no oscuro */
+    border-bottom: 3px solid var(--dorado-prestigio) !important; /* Línea dorada */
+    border-radius: 4px 4px 0 0;
+}
+[data-theme="dark"] .stTabs [aria-selected="true"] p {
+    color: var(--dorado-prestigio) !important; /* Letras doradas de alta gama */
+    font-weight: 700 !important;
+}
+
+/* Efecto Hover */
+.stTabs [data-baseweb="tab"]:hover p {
+    color: var(--azul-hover) !important;
+}
+[data-theme="dark"] .stTabs [data-baseweb="tab"]:hover p {
+    color: var(--blanco-puro) !important; /* Ilumina en blanco al pasar el mouse */
+}
+
+/* ======================================================== */
+
+/* Botones principales */
 .stButton > button {
     width: 100%;
-    background-color: #ff4b4b;
-    color: white;
-    border-radius: 8px;
-    border: none;
-    padding: 12px 20px;
-    font-weight: bold;
-    transition: background-color 0.3s ease, transform 0.1s ease;
+    background-color: var(--azul-marino);
+    color: #ffffff !important;
+    border-radius: 6px;
+    border: 1px solid var(--azul-marino);
+    padding: 14px 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: all 0.2s ease;
 }
 
+/* Hover del botón */
 .stButton > button:hover {
-    background-color: #e04343;
-    color: white;
+    background-color: var(--azul-hover);
+    border-color: var(--azul-hover);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-.stButton > button:active {
-    transform: scale(0.98);
+[data-theme="dark"] .stButton > button {
+    background-color: var(--dorado-prestigio);
+    border-color: var(--dorado-prestigio);
+    color: #0f1e36 !important;
+}
+
+[data-theme="dark"] .stButton > button:hover {
+    background-color: var(--dorado-hover);
+    border-color: var(--dorado-hover);
+}
+
+/* Cuadros de Alerta e Info */
+.stAlert {
+    border-radius: 8px;
+    border-left: 5px solid var(--azul-marino) !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    padding: 22px;
+}
+
+[data-theme="dark"] .stAlert {
+    border-left: 5px solid var(--dorado-prestigio) !important;
+}
+
+/* Optimización Responsive para pantallas móviles */
+@media (max-width: 640px) {
+    h1 {
+        font-size: 1.8rem;
+    }
+    .stTabs [data-baseweb="tab"] p {
+        font-size: 0.85rem;
+    }
+    .stButton > button {
+        padding: 12px 16px;
+        font-size: 0.95rem;
+    }
 }
