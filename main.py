@@ -126,7 +126,7 @@ with pestaña_pdf:
 with pestaña_buscar:
     st.header("Buscar o Consultar un Fallo")
     st.write(
-        "Ingresá el nombre del fallo (ej: 'Mostachio' o 'Marcilese'). Si no está en tu base local, la IA lo investigará al instante.")
+        "Ingresá el nombre del fallo (ej: 'Aquino' o 'Badaro'). Si no está en tu base local, la IA lo investigará al instante.")
 
     nombre_fallo = st.text_input("Nombre del fallo o carátula a consultar:")
 
@@ -182,3 +182,5 @@ with pestaña_buscar:
                         st.error(f"❌ Ocurrió un error al consultar con la IA: {str(e)}")
         else:
             st.warning("Por favor, escribí un nombre para iniciar la búsqueda.")
+
+st.caption("🔒 **Aviso de Privacidad:** Este sistema procesa los documentos de forma segura a través de la API de Google Gemini en modo de desarrollo. Las sentencias reales con datos sensibles deben ser anonimizadas previamente conforme a la Ley N° 25.326 de Protección de Datos Personales.")
