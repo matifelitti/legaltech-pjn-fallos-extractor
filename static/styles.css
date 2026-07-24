@@ -1,143 +1,183 @@
-/* Paleta de Colores */
 :root {
-    --azul-marino: #0f1e36;
-    --azul-hover: #172e52;
-    --gris-oxford: #64748b;
+    --claro-fondo-app: #f8fafc;
+    --claro-azul-marino: #0f1e36;
+    --claro-azul-hover: #274368;
+    --claro-texto-principal: #1e293b;
+    --claro-texto-secundario: #475569;
+    --claro-borde: #e2e8f0;
+
+    --oscuro-fondo-card: #1e293b;
+    --oscuro-texto-principal: #f8fafc;
+    --oscuro-texto-secundario: #cbd5e1;
+    --oscuro-borde: #334155;
+
     --dorado-prestigio: #c5a880;
     --dorado-hover: #b39366;
-    --blanco-puro: #ffffff;
-    --gris-tiza-claro: #cbd5e1;
+    --dorado-ultra-claro: #f5ebd5;
 }
 
-/* Título principal */
 h1 {
-    font-family: 'Georgia', serif;
-    color: var(--azul-marino);
+    font-family: 'Georgia', 'Times New Roman', serif;
     font-weight: 700;
+    font-size: 2.4rem;
     letter-spacing: -0.5px;
-    padding-bottom: 5px;
+    padding-bottom: 8px;
     text-align: center;
 }
 
-/* Soporte para modo oscuro en el título principal */
 [data-theme="dark"] h1 {
-    color: var(--blanco-puro);
+    color: var(--oscuro-texto-principal) !important;
 }
 
-/* Subtítulos de la app */
 .stMarkdown p {
-    font-size: 1.05rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--claro-texto-secundario) !important;
+    font-size: 1.1rem;
     text-align: center;
+    line-height: 1.5;
 }
 
-/* Diseño elegante y centrado para las pestañas (Tabs) */
+[data-theme="dark"] .stMarkdown p {
+    color: var(--oscuro-texto-secundario) !important;
+}
+
 .stTabs [data-baseweb="tab-list"] {
-    gap: 12px;
+    gap: 16px;
     justify-content: center;
-    border-bottom: 2px solid var(--gris-oxford);
-    padding-bottom: 10px;
+    border-bottom: 2px solid var(--claro-borde) !important;
+    padding-bottom: 8px;
 }
 
-/* TEXTO DE LAS PESTAÑAS NO SELECCIONADAS (Modo Claro) */
+[data-theme="dark"] .stTabs [data-baseweb="tab-list"] {
+    border-bottom: 2px solid var(--oscuro-borde) !important;
+}
+
+.stTabs [data-baseweb="tab"] {
+    height: 50px;
+    padding: 10px 24px !important;
+    border-radius: 6px 6px 0 0 !important;
+    background-color: transparent !important;
+    transition: all 0.25s ease-in-out;
+}
+
 .stTabs [data-baseweb="tab"] p {
-    color: var(--gris-oxford) !important;
-    font-weight: 600;
-    font-size: 1rem;
-    transition: all 0.2s ease;
+    color: var(--claro-texto-secundario) !important;
+    font-weight: 600 !important;
+    font-size: 1rem !important;
 }
 
-/* TEXTO DE LAS PESTAÑAS NO SELECCIONADAS (Modo Oscuro - Gris legible) */
 [data-theme="dark"] .stTabs [data-baseweb="tab"] p {
-    color: var(--gris-tiza-claro) !important;
+    color: var(--oscuro-texto-secundario) !important;
 }
 
-/*  ACTIVA (Modo Claro - Fondo Azul Sutil) */
-.stTabs [aria-selected="true"] {
-    background-color: rgba(15, 30, 54, 0.08) !important;
-    border-bottom: 3px solid var(--azul-marino) !important;
-    border-radius: 4px 4px 0 0;
-}
-.stTabs [aria-selected="true"] p {
-    color: var(--azul-marino) !important;
-    font-weight: 700 !important;
-}
-
-/* (Modo Oscuro - Fondo Grafito y Letras Doradas) */
 [data-theme="dark"] .stTabs [aria-selected="true"] {
-    background-color: rgba(255, 255, 255, 0.05) !important; /* Fondo sutil, no oscuro */
-    border-bottom: 3px solid var(--dorado-prestigio) !important; /* Línea dorada */
-    border-radius: 4px 4px 0 0;
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border-bottom: 3px solid var(--dorado-prestigio) !important;
 }
 [data-theme="dark"] .stTabs [aria-selected="true"] p {
-    color: var(--dorado-prestigio) !important; /* Letras doradas de alta gama */
-    font-weight: 700 !important;
+    color: var(--oscuro-texto-principal) !important;
 }
 
-/* Efecto Hover */
+
+[data-theme="dark"] .stTabs [aria-selected="true"] {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border-bottom: 3px solid var(--dorado-prestigio) !important;
+}
+[data-theme="dark"] .stTabs [aria-selected="true"] p {
+    color: var(--oscuro-texto-principal) !important;
+
+}
+
 .stTabs [data-baseweb="tab"]:hover p {
-    color: var(--azul-hover) !important;
+    color: var(--claro-azul-hover) !important;
 }
 [data-theme="dark"] .stTabs [data-baseweb="tab"]:hover p {
-    color: var(--blanco-puro) !important; /* Ilumina en blanco al pasar el mouse */
+    color: var(--oscuro-texto-principal) !important;
 }
 
-/* ======================================================== */
-
-/* Botones principales */
 .stButton > button {
     width: 100%;
-    background-color: var(--azul-marino);
+    background-color: var(--claro-azul-marino) !important;
     color: #ffffff !important;
-    border-radius: 6px;
-    border: 1px solid var(--azul-marino);
-    padding: 14px 20px;
-    font-size: 1rem;
-    font-weight: 600;
+    border-radius: 6px !important;
+    border: 1px solid var(--claro-azul-marino) !important;
+    padding: 14px 20px !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
     letter-spacing: 0.5px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.06) !important;
     transition: all 0.2s ease;
 }
 
-/* Hover del botón */
 .stButton > button:hover {
-    background-color: var(--azul-hover);
-    border-color: var(--azul-hover);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    background-color: var(--claro-azul-hover) !important;
+    border-color: var(--claro-azul-hover) !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12) !important;
 }
 
 [data-theme="dark"] .stButton > button {
-    background-color: var(--dorado-prestigio);
-    border-color: var(--dorado-prestigio);
+    background-color: var(--dorado-prestigio) !important;
+    border-color: var(--dorado-prestigio) !important;
     color: #0f1e36 !important;
 }
 
 [data-theme="dark"] .stButton > button:hover {
-    background-color: var(--dorado-hover);
-    border-color: var(--dorado-hover);
+    background-color: var(--dorado-hover) !important;
+    border-color: var(--dorado-hover) !important;
 }
 
-/* Cuadros de Alerta e Info */
 .stAlert {
-    border-radius: 8px;
-    border-left: 5px solid var(--azul-marino) !important;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-    padding: 22px;
+    border-radius: 8px !important;
+    background-color: #ffffff !important;
+    border: 1px solid var(--claro-borde) !important;
+    border-left: 6px solid var(--claro-azul-marino) !important;
+    box-shadow: 0 4px 16px rgba(15, 30, 54, 0.04) !important;
+    padding: 24px !important;
 }
 
 [data-theme="dark"] .stAlert {
-    border-left: 5px solid var(--dorado-prestigio) !important;
+    background-color: var(--oscuro-fondo-card) !important;
+    border: 1px solid var(--oscuro-borde) !important;
+    border-left: 6px solid var(--dorado-prestigio) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
 }
 
-/* Optimización Responsive para pantallas móviles */
+.stAlert p, .stAlert span, .stAlert li, .stAlert strong {
+    color: var(--claro-texto-principal) !important;
+    text-align: left !important;
+    font-size: 1.02rem !important;
+    line-height: 1.6 !important;
+}
+
+[data-theme="dark"] .stAlert p,
+[data-theme="dark"] .stAlert span,
+[data-theme="dark"] .stAlert li {
+    color: var(--oscuro-texto-principal) !important;
+}
+
+[data-theme="dark"] .stAlert strong {
+    color: var(--dorado-ultra-claro) !important;
+}
+
+[data-theme="dark"] div[data-testid="stCaptionContainer"] p,
+[data-theme="dark"] div[data-testid="stCaptionContainer"] span {
+    color: #ffffff !important;
+    font-size: 0.9rem !important;
+}
+
 @media (max-width: 640px) {
     h1 {
-        font-size: 1.8rem;
+        font-size: 1.9rem;
+    }
+    .stTabs [data-baseweb="tab"] {
+        padding: 8px 12px !important;
+        height: 44px;
     }
     .stTabs [data-baseweb="tab"] p {
-        font-size: 0.85rem;
+        font-size: 0.85rem !important;
     }
     .stButton > button {
-        padding: 12px 16px;
-        font-size: 0.95rem;
+        padding: 12px 16px !important;
+        font-size: 0.95rem !important;
     }
 }
